@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  db-mysql:
+    image: mysql:5.7.32
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: ead
+    ports:
+      - 3306:3306
+
+  backend:
+    image: openjdk:14-jdk-alpine
+    ports:
+      - "80:8080"
+    depends_on:
+      - db-mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: db-mysql
+      PMA_PORT: 3306
+    ports:
+      - 5000:80
+    depends_on:
+      - db-mysql
