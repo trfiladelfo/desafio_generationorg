@@ -58,7 +58,7 @@ java -jar desafio-0.0.1-SNAPSHOT
 
 ## Como testar?
 
-Após colocar o serviço em execução pode-se acessar duas URLs:
+Após colocar o serviço em execução, pode ser feita as chamadas conforme essa documentação:
 
 🕸 **Documentação da API RESTful**
 
