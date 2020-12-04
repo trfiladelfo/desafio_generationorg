@@ -1,0 +1,670 @@
+{
+	"info": {
+		"_postman_id": "8d3637d1-6f9e-4571-be8b-8db0ec458fe6",
+		"name": "Generation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "turma",
+			"item": [
+				{
+					"name": "Listagem de turma - sem filtro",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_host}}/api/v1/turma",
+							"host": [
+								"{{api_host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"turma"
+							]
+						},
+						"description": "Retorna a listagem das turmas cadastradas no banco de dados"
+					},
+					"response": [
+						{
+							"name": "Listagem de turma",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api_host}}/api/v1/turma",
+									"host": [
+										"{{api_host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"turma"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 04 Dec 2020 05:50:59 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"descricao\": \"Turma Amarela\",\n        \"tipo\": \"Presencial\",\n        \"participantes\": []\n    },\n    {\n        \"id\": 2,\n        \"descricao\": \"Turma amarela\",\n        \"tipo\": \"Presencial\",\n        \"participantes\": []\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Listagem de turma - com filtro",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_host}}/api/v1/turma?name=Amarelo",
+							"host": [
+								"{{api_host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"turma"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Amarelo"
+								}
+							]
+						},
+						"description": "Retorna a listagem das turmas cadastradas no banco de dados"
+					},
+					"response": [
+						{
+							"name": "Listagem de turma - com filtro",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api_host}}/api/v1/turma?name=Amarelo",
+									"host": [
+										"{{api_host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"turma"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "Amarelo"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 04 Dec 2020 06:02:39 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"descricao\": \"Turma Amarela\",\n        \"tipo\": \"Presencial\",\n        \"participantes\": []\n    },\n    {\n        \"id\": 2,\n        \"descricao\": \"Turma amarela\",\n        \"tipo\": \"Presencial\",\n        \"participantes\": []\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Persiste Turma",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"descricao\": \"Turma amarela\",\n    \"tipo\": \"Presencial\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_host}}/api/v1/turma",
+							"host": [
+								"{{api_host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"turma"
+							]
+						},
+						"description": "Realiza a inserção da turma na base de dados."
+					},
+					"response": [
+						{
+							"name": "Persiste Turma",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"descricao\": \"Turma amarela\",\n    \"tipo\": \"Presencial\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{api_host}}/api/v1/turma",
+									"host": [
+										"{{api_host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"turma"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 04 Dec 2020 05:50:29 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 2,\n    \"descricao\": \"Turma amarela\",\n    \"tipo\": \"Presencial\",\n    \"participantes\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "Atualiza Turma",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"descricao\": \"Turma Amarela\",\n    \"tipo\": \"Presencial\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_host}}/api/v1/turma/1",
+							"host": [
+								"{{api_host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"turma",
+								"1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Atualiza Turma",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"descricao\": \"Turma Amarela\",\n    \"tipo\": \"Presencial\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{api_host}}/api/v1/turma/1",
+									"host": [
+										"{{api_host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"turma",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 04 Dec 2020 05:50:06 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"descricao\": \"Turma Amarela\",\n    \"tipo\": \"Presencial\",\n    \"participantes\": null\n}"
+						}
+					]
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "participante",
+			"item": [
+				{
+					"name": "Listagem de participante - sem filtro",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_host}}/api/v1/participante",
+							"host": [
+								"{{api_host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"participante"
+							]
+						},
+						"description": "Retorna a listagem dos participantes cadastradas no banco de dados"
+					},
+					"response": [
+						{
+							"name": "Listagem de turma",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api_host}}/api/v1/turma",
+									"host": [
+										"{{api_host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"turma"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 04 Dec 2020 05:50:59 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"descricao\": \"Turma Amarela\",\n        \"tipo\": \"Presencial\",\n        \"participantes\": []\n    },\n    {\n        \"id\": 2,\n        \"descricao\": \"Turma amarela\",\n        \"tipo\": \"Presencial\",\n        \"participantes\": []\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Listagem de turma - com filtro",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_host}}/api/v1/turma?name=Amarelo",
+							"host": [
+								"{{api_host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"turma"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Amarelo"
+								}
+							]
+						},
+						"description": "Retorna a listagem das turmas cadastradas no banco de dados"
+					},
+					"response": [
+						{
+							"name": "Listagem de turma - com filtro",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{api_host}}/api/v1/turma?name=Amarelo",
+									"host": [
+										"{{api_host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"turma"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "Amarelo"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 04 Dec 2020 06:02:39 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"descricao\": \"Turma Amarela\",\n        \"tipo\": \"Presencial\",\n        \"participantes\": []\n    },\n    {\n        \"id\": 2,\n        \"descricao\": \"Turma amarela\",\n        \"tipo\": \"Presencial\",\n        \"participantes\": []\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Persiste participante",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nome\": \"Lucas\",\n    \"email\": \"lucas@email.com\",\n    \"observacoes\": \"Muito dedicado\",\n    \"turma\": {\n        \"id\": 1\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_host}}/api/v1/participante",
+							"host": [
+								"{{api_host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"participante"
+							]
+						},
+						"description": "Realiza a inserção da turma na base de dados."
+					},
+					"response": [
+						{
+							"name": "Persiste participante",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"nome\": \"Lucas\",\n    \"email\": \"lucas@email.com\",\n    \"observacoes\": \"Muito dedicado\",\n    \"turma\": {\n        \"id\": 1\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{api_host}}/api/v1/participante",
+									"host": [
+										"{{api_host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"participante"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 04 Dec 2020 06:29:37 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"nome\": \"Lucas\",\n    \"email\": \"lucas@email.com\",\n    \"observacoes\": \"Muito dedicado\",\n    \"turma\": {\n        \"id\": 1,\n        \"descricao\": \"Turma Amarela\",\n        \"tipo\": \"Presencial\",\n        \"participantes\": []\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Atualiza participante",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nome\": \"Lucas\",\n    \"email\": \"lucas@email.com\",\n    \"observacoes\": \"Muito dedicado\",\n    \"turma\": {\n        \"id\": 1\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_host}}/api/v1/participante/1",
+							"host": [
+								"{{api_host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"participante",
+								"1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Atualiza Turma",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"descricao\": \"Turma Amarela\",\n    \"tipo\": \"Presencial\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{api_host}}/api/v1/turma/1",
+									"host": [
+										"{{api_host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"turma",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 04 Dec 2020 05:50:06 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"descricao\": \"Turma Amarela\",\n    \"tipo\": \"Presencial\",\n    \"participantes\": null\n}"
+						}
+					]
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "b5844d76-c52e-4436-8833-5b44aba457b5",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "63d1081d-5f65-40af-ac9b-de13a1da6cad",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}

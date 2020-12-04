@@ -7,16 +7,9 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: root
       MYSQL_PASSWORD: root
-      MYSQL_DATABASE: ead
+      MYSQL_DATABASE: desafio
     ports:
       - 3306:3306
-
-  backend:
-    image: openjdk:14-jdk-alpine
-    ports:
-      - "80:8080"
-    depends_on:
-      - db-mysql
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
