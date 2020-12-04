@@ -1,5 +1,8 @@
 package org.generation.desafio.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 
 /**
@@ -28,7 +31,9 @@ public class Participante {
     @Column(name = "observacoes", length = 250) // JPA alias para o nome da coluna da tabela
     private String observacoes;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "turma", nullable = false)
+    @JsonBackReference  //Anotacao usada para cancelar a recursividade no momento de preparar o json
     private Turma turma;
 
     /**

@@ -35,7 +35,7 @@ public class TurmaController {
      *          500: corresponde que houve algum erro no servidor
      */
     @GetMapping
-    public ResponseEntity<List<Turma>> getAllTurma(@RequestParam("name") String name) {
+    public ResponseEntity<List<Turma>> getAllTurma(@RequestParam(name="name", required=false) String name) {
         ResponseEntity<List<Turma>> entity;
         if (name != null && !"".equals(name))
             entity = getByNameTurma(name);
@@ -136,7 +136,7 @@ public class TurmaController {
      * Realiza a inserção da turma na base de dados.
      *
      * @param turma json com as informações da turma
-     * @return  200: turma com os dados consolidados
+     * @return  201: turma com os dados consolidados
      *          400: corresponde o objeto turma que nao atendeu a validação
      *          500: corresponde que houve algum erro no servidor
      */
@@ -158,7 +158,7 @@ public class TurmaController {
             //validacao feita manual
             entity = validarRequestTurma(turma);
             if(entity == null)
-                entity = ResponseEntity.ok(turmaRepository.saveAndFlush(turma));
+                entity = ResponseEntity.status(HttpStatus.CREATED).body(turmaRepository.saveAndFlush(turma));
 
         } catch (Exception exception) {
             entity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

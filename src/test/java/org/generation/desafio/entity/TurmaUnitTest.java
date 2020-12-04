@@ -1,4 +1,4 @@
-package org.generation.desafio;
+package org.generation.desafio.entity;
 
 import org.generation.desafio.entity.Turma;
 import org.junit.jupiter.api.Test;

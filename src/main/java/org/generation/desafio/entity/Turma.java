@@ -1,5 +1,8 @@
 package org.generation.desafio.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
@@ -12,9 +15,6 @@ import java.util.List;
 @Table(name = "turma") // JPA: realizamos o alias do nome da tabela para a classe
 public class Turma implements Serializable {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
 
     @Id // JPA: indica qque esse atributo é identificador (chave da tabela)
@@ -33,7 +33,8 @@ public class Turma implements Serializable {
     // de valor nulo
     private String tipo;
 
-    @OneToMany(mappedBy = "turma", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "turma", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference //Anotacao usada para cancelar a recursividade no momento de preparar o json
     private List<Participante> participantes;
 
     /**
