@@ -1,9 +1,9 @@
 package org.generation.desafio;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.generation.desafio.entity.Turma;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Classe para realização dos testes unitários para a entidade Turma
