@@ -1,7 +1,8 @@
 package org.generation.desafio.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 
@@ -11,21 +12,19 @@ import javax.persistence.*;
  */
 @Entity // JPA: indica para o processador que é uma entidade mapeável e uma tabela
 @Table(name = "participante") // JPA: realizamos o alias do nome da tabela para a classe
+@JsonIdentityInfo(scope = Participante.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "id") //Forma diferente para cancelar a recursividade no momento de preparar o json
 public class Participante {
     @Id // JPA: indica qque esse atributo é identificador (chave da tabela)
     @GeneratedValue(strategy = GenerationType.IDENTITY) // JPA: caso não ter preenchimento antes de confirma na base
-    // gerará um número
-    // único
+    // gerará um número único
     private Long id;
 
     @Column(name = "nome", nullable = false, length = 120) // JPA alias para o nome da coluna da tabela e marcação para
-    // não ser
-    // de valor nulo
+    // não ser de valor nulo
     private String nome;
 
     @Column(name = "email", nullable = false, length = 120) // JPA alias para o nome da coluna da tabela e marcação para
-    // não ser
-    // de valor nulo
+    // não ser de valor nulo
     private String email;
 
     @Column(name = "observacoes", length = 250) // JPA alias para o nome da coluna da tabela
@@ -33,7 +32,7 @@ public class Participante {
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "turma", nullable = false)
-    @JsonBackReference  //Anotacao usada para cancelar a recursividade no momento de preparar o json
+    //@JsonBackReference  //Anotacao usada para cancelar a recursividade no momento de preparar o json
     private Turma turma;
 
     /**

@@ -1,16 +1,15 @@
 package org.generation.desafio.controller;
 
-import org.generation.desafio.entity.Participante;
+import org.generation.desafio.controller.exception.ArgumentoIlegalException;
+import org.generation.desafio.controller.exception.DesafioException;
+import org.generation.desafio.controller.exception.NaoExisteRegistroException;
 import org.generation.desafio.entity.Turma;
-import org.generation.desafio.repository.ParticipanteRepository;
 import org.generation.desafio.repository.TurmaRepository;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -19,13 +18,8 @@ import java.util.Optional;
 @RequestMapping(path = "api/v1/turma")
 public class TurmaController {
 
-    private final TurmaRepository turmaRepository;
-    //private final ParticipanteRepository participanteRepository;
-
-    public TurmaController(TurmaRepository turmaRepository/*, ParticipanteRepository participanteRepository*/) {
-        this.turmaRepository = turmaRepository;
-        //this.participanteRepository = participanteRepository;
-    }
+    @Resource
+    private TurmaRepository turmaRepository;
 
     /**
      * Retorna a listagem das turmas cadastradas no banco de dados
@@ -53,14 +47,14 @@ public class TurmaController {
     private ResponseEntity<List<Turma>> getAllTurma() {
         ResponseEntity<List<Turma>> entity;
 
-        try {
-            List<Turma> turmas = turmaRepository.findAll();
-            entity = turmas.size() > 0
-                    ? ResponseEntity.ok(turmas)
-                    : ResponseEntity.noContent().build();
-        } catch (Exception ex) {
-            entity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+
+        List<Turma> turmas = turmaRepository.findAll();
+        /*entity = turmas.size() > 0
+                ? ResponseEntity.ok(turmas)
+                : ResponseEntity.noContent().build();*/
+        if(turmas.size() > 0)
+            entity = ResponseEntity.ok(turmas);
+        else throw new NaoExisteRegistroException();
 
         return entity;
     }
@@ -78,21 +72,27 @@ public class TurmaController {
         if (name != null && !"".equals(name)) {
             try {
 
-                Turma turma = new Turma();
-                turma.setDescricao(name);
+                //Turma turma = new Turma();
+                //turma.setDescricao(name);
+                //List<Turma> turmas = turmaRepository.findAll(Example.of(turma, ExampleMatcher.matchingAll().withIgnoreCase()));
 
-                List<Turma> turmas = turmaRepository.findAll(Example.of(turma, ExampleMatcher.matchingAll().withIgnoreCase()));
-                entity = turmas.size() > 0
+                List<Turma> turmas = turmaRepository.getByNameTurma(name);
+
+                /*entity = turmas.size() > 0
                         ? ResponseEntity.ok(turmas)
-                        : ResponseEntity.noContent().build();
+                        : ResponseEntity.noContent().build();*/
+                if(turmas.size() > 0)
+                    entity = ResponseEntity.ok(turmas);
+                else throw new NaoExisteRegistroException();
 
             } catch (NoSuchElementException noSuchElementException) {
-                entity = ResponseEntity.notFound().build();
+                throw new NaoExisteRegistroException(noSuchElementException);
+
             } catch (Exception exception) {
                 entity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
 
-        } else entity = ResponseEntity.badRequest().build();
+        } else throw new ArgumentoIlegalException("Você não especificou o paramento name");
 
         return entity;
     }
@@ -121,13 +121,15 @@ public class TurmaController {
                         : ResponseEntity.notFound().build();
                  */
                 entity = opt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+
             } catch (NoSuchElementException noSuchElementException) {
-                entity = ResponseEntity.notFound().build();
+                throw new NaoExisteRegistroException(noSuchElementException);
+
             } catch (Exception exception) {
                 entity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
 
-        } else entity = ResponseEntity.badRequest().build();
+        } else throw new ArgumentoIlegalException();
 
         return entity;
     }
@@ -141,28 +143,14 @@ public class TurmaController {
      *          500: corresponde que houve algum erro no servidor
      */
     @PostMapping
-    public ResponseEntity<Turma> postTurma(@RequestBody Turma turma) {
-        ResponseEntity<Turma> entity;
+    public ResponseEntity<Turma> postTurma(@RequestBody Turma turma) throws Exception {
+        ResponseEntity<Turma> entity = null;
 
-//        List<Participante> participantes = turma.getParticipantes();
-//        if (participantes != null) {
-//            List<Participante> oParticipantes = new ArrayList<Participante>();
-//            participantes.forEach(it -> {
-//                oParticipantes.add(participanteRepository.findById(it.getId()).get());
-//            });
-//            turma.setParticipantes(oParticipantes);
-//        }
+        //validacao feita manual
+        boolean validado = validarRequestTurma(turma);
+        if (validado)
+            entity = ResponseEntity.status(HttpStatus.CREATED).body(turmaRepository.saveAndFlush(turma));
 
-        try {
-
-            //validacao feita manual
-            entity = validarRequestTurma(turma);
-            if(entity == null)
-                entity = ResponseEntity.status(HttpStatus.CREATED).body(turmaRepository.saveAndFlush(turma));
-
-        } catch (Exception exception) {
-            entity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
 
         return entity;
     }
@@ -178,21 +166,17 @@ public class TurmaController {
      */
     @PutMapping("{id}")
     public ResponseEntity<Turma> putTurma(@PathVariable("id") Long id, @RequestBody Turma turma) {
-        ResponseEntity<Turma> entity;
+        ResponseEntity<Turma> entity = null;
 
         if (id > 0) {
-            try {
-                //validacao feita manual
-                entity = validarRequestTurma(turma);
-                if (entity == null) {
-                    turma.setId(id);
-                    entity = ResponseEntity.ok(turmaRepository.save(turma));
-                }
-
-            } catch (Exception exception) {
-                entity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            //validacao feita manual
+            boolean validado = validarRequestTurma(turma);
+            if (validado) {
+                turma.setId(id);
+                entity = ResponseEntity.ok(turmaRepository.save(turma));
             }
-        } else entity = ResponseEntity.badRequest().build();
+
+        } else throw new ArgumentoIlegalException();
 
         return entity;
     }
@@ -210,13 +194,10 @@ public class TurmaController {
         ResponseEntity entity;
 
         if (id > 0) {
-            try {
-                turmaRepository.deleteById(id);
-                entity = ResponseEntity.ok().build();
-            } catch (Exception exception) {
-                entity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            }
-        } else entity = ResponseEntity.badRequest().build();
+            turmaRepository.deleteById(id);
+            entity = ResponseEntity.ok().build();
+
+        } else throw new ArgumentoIlegalException();
 
         return entity;
 
@@ -230,12 +211,18 @@ public class TurmaController {
      * @return  null: passou pela validaçao
      *          ResponseEntity: corresponde a algum erro
      */
-    private ResponseEntity validarRequestTurma(Turma turma) {
-        ResponseEntity entity = null;
-        if (turma == null) entity = ResponseEntity.badRequest().build();
-        if ("".equals(turma.getDescricao())) entity = ResponseEntity.badRequest().build();
-        if ("".equals(turma.getTipo())) entity = ResponseEntity.badRequest().build();
-        return entity;
+    private boolean validarRequestTurma(Turma turma) throws DesafioException {
+        if (turma == null) throw new DesafioException("Requisição sem a informação de turma");
+
+        if (turma.getDescricao() == null || "".equals(turma.getDescricao().trim()))
+            throw new DesafioException(HttpStatus.BAD_REQUEST, "Você deve especifcar uma descrição para essa turma");
+        else if (turma.getDescricao().length() > 250)
+            throw new DesafioException(HttpStatus.BAD_REQUEST, "Você execedeu o limite de 250 caracteres para a descrição");
+
+        if (turma.getTipo() == null || "".equals(turma.getTipo()))
+            throw new DesafioException(HttpStatus.BAD_REQUEST, "Você deve especifcar um tipo para essa turma");
+
+        return true;
     }
 
 }

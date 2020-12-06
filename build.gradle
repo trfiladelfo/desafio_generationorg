@@ -14,12 +14,22 @@ repositories {
 }
 
 dependencies {
+
+    // Biblioteca fundamentais para o projeto
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     runtimeOnly 'mysql:mysql-connector-java:5.1.49'
 
+    // Biblioteca para os desenvolvedores
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    // Bibliotecas para realizar testes
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+
+    // Para realizar geracao de nomes
+    testImplementation 'com.github.javafaker:javafaker:1.0.2'
 }
 
 test {
