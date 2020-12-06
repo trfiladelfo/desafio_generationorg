@@ -31,7 +31,7 @@ import java.util.Random;
 /**
  * Classe para realização dos testes de integracao para o recurso participante
  */
-@SpringBootTest(properties = { "spring.jpa.hibernate.ddl-auto=update" }) // para criar e deletar a tabela de teste
+@SpringBootTest(properties = { "spring.jpa.hibernate.ddl-auto=create-drop" }) // para criar e deletar a tabela de teste
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class) // para executar os testes em order conforme a anotacao @Order
 @AutoConfigureMockMvc
 public class ParticipanteIntegrationTest {
@@ -229,7 +229,7 @@ public class ParticipanteIntegrationTest {
 
         //Objeto a ser alterado
         Participante participante = participantes.get(index);
-        participante.setEmail(String.format("Email alterada %s", index));
+        participante.setEmail(String.format(new Faker().internet().emailAddress(), index));
         Turma turma = participante.getTurma();
         turma.setParticipantes(null); // para nao parser coisa a mais
         participante.setTurma(turma);
@@ -273,5 +273,31 @@ public class ParticipanteIntegrationTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
+
+    /////////
+
+    @Test
+    @Order(9)
+    public void testarInsercaoComEmailInvalido() throws Exception {
+
+        Turma turma = turmaRepository.save(TurmaUtils.createModelObject(null, "Turma vermelha", "Presencial"));
+
+        String email = "thiago.filadelfo@gmail";
+        String nome = "Thiago";
+        String obs = "obs";
+
+        //Objeto a ser gravado
+        Participante created = ParticipanteUtils.createModelObject(null, email, nome, obs, turma);
+
+        // Convertendo para json o objeto
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(created);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/participante")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
 
 }

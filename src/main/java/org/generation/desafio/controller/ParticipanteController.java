@@ -1,5 +1,9 @@
 package org.generation.desafio.controller;
 
+import org.generation.desafio.controller.exception.ArgumentoIlegalException;
+import org.generation.desafio.controller.exception.DesafioException;
+import org.generation.desafio.controller.exception.NaoExisteRegistroException;
+import org.generation.desafio.core.Validator;
 import org.generation.desafio.entity.Participante;
 import org.generation.desafio.entity.Turma;
 import org.generation.desafio.repository.ParticipanteRepository;
@@ -49,16 +53,16 @@ public class ParticipanteController {
      *          500: corresponde que houve algum erro no servidor
      */
     private ResponseEntity<List<Participante>> getAllParticipante() {
-        ResponseEntity<List<Participante>> entity;
+        ResponseEntity<List<Participante>> entity = null;
 
-        try {
-            List<Participante> participantes = participanteRepository.findAll();
-            entity = participantes.size() > 0
-                    ? ResponseEntity.ok(participantes)
-                    : ResponseEntity.noContent().build();
-        } catch (Exception ex) {
-            entity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        List<Participante> participantes = participanteRepository.findAll();
+        /*entity = participantes.size() > 0
+                ? ResponseEntity.ok(participantes)
+                : ResponseEntity.noContent().build();*/
+
+        if(participantes.size() > 0)
+            entity = ResponseEntity.ok(participantes);
+        else throw new NaoExisteRegistroException();
 
         return entity;
     }
@@ -71,7 +75,7 @@ public class ParticipanteController {
      *          500: corresponde que houve algum erro no servidor
      */
     public ResponseEntity<List<Participante>> getByNameParticipante(String name) {
-        ResponseEntity<List<Participante>> entity;
+        ResponseEntity<List<Participante>> entity = null;
 
         if (name != null && !"".equals(name)) {
             try {
@@ -81,17 +85,22 @@ public class ParticipanteController {
                 //List<Participante> participantes = participanteRepository.findAll(Example.of(Participante, ExampleMatcher.matchingAll().withIgnoreCase()));
 
                 List<Participante> participantes = participanteRepository.getByNameParticipante(name);
-                entity = participantes.size() > 0
-                        ? ResponseEntity.ok(participantes)
-                        : ResponseEntity.noContent().build();
+                /*entity = participantes.size() > 0
+                ? ResponseEntity.ok(participantes)
+                : ResponseEntity.noContent().build();*/
+
+                if(participantes.size() > 0)
+                    entity = ResponseEntity.ok(participantes);
+                else throw new NaoExisteRegistroException();
 
             } catch (NoSuchElementException noSuchElementException) {
-                entity = ResponseEntity.notFound().build();
+                throw new NaoExisteRegistroException();
+                
             } catch (Exception exception) {
                 entity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
 
-        } else entity = ResponseEntity.badRequest().build();
+        } else throw new ArgumentoIlegalException("Você não especificou o paramento name");
 
         return entity;
     }
@@ -121,7 +130,7 @@ public class ParticipanteController {
                  */
                 entity = opt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
             } catch (NoSuchElementException noSuchElementException) {
-                entity = ResponseEntity.notFound().build();
+                 throw new NaoExisteRegistroException(noSuchElementException);
             } catch (Exception exception) {
                 entity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
@@ -141,21 +150,18 @@ public class ParticipanteController {
      */
     @PostMapping
     public ResponseEntity<Participante> postParticipante(@RequestBody Participante participante) {
-        ResponseEntity<Participante> entity;
+        ResponseEntity<Participante> entity = null;
 
-        Turma turma = participante.getTurma();
-        if (turma != null && turma.getId() != null && turma.getId() > 0)
-            turmaRepository.findById(turma.getId()).ifPresent(participante::setTurma);
+        boolean validado = validarRequestParticipante(participante);
 
-        try {
+        //validacao feita manual
+        if(validado) {
+            turmaRepository.findById(participante.getTurma().getId()).ifPresent(participante::setTurma);
 
-            //validacao feita manual
-            entity = validarRequestParticipante(participante);
-            if(entity == null)
+            if(participante.getTurma() != null)
                 entity = ResponseEntity.status(HttpStatus.CREATED).body(participanteRepository.saveAndFlush(participante));
 
-        } catch (Exception exception) {
-            entity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            else throw new NaoExisteRegistroException("Não existe registro desta turma cadastrada");
         }
 
         return entity;
@@ -172,27 +178,24 @@ public class ParticipanteController {
      */
     @PutMapping("{id}")
     public ResponseEntity<Participante> putParticipante(@PathVariable("id") Long id, @RequestBody Participante participante) {
-        ResponseEntity<Participante> entity;
+        ResponseEntity<Participante> entity = null;
 
         if (id > 0) {
-            try {
-                //validacao feita manual
-                entity = validarRequestParticipante(participante);
-                if (entity == null) {
-                    participante.setId(id);
-                    Turma turma = participante.getTurma();
-                    if (turma.getId() > 0) {
-                        turmaRepository.findById(turma.getId()).ifPresent(participante::setTurma);
-                        participante.getTurma().setParticipantes(null);
-                    }
+            //validacao feita manual
+            boolean validado = validarRequestParticipante(participante);
 
+            if(validado) {
+
+                participante.setId(id);
+                turmaRepository.findById(participante.getTurma().getId()).ifPresent(participante::setTurma);
+
+                if(participante.getTurma() != null) {
+                    participante.getTurma().setParticipantes(null);
                     entity = ResponseEntity.ok(participanteRepository.save(participante));
-                }
-
-            } catch (Exception exception) {
-                entity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                } else throw new NaoExisteRegistroException("Não existe registro desta turma cadastrada");
             }
-        } else entity = ResponseEntity.badRequest().build();
+
+        } else throw new ArgumentoIlegalException();
 
         return entity;
     }
@@ -230,12 +233,22 @@ public class ParticipanteController {
      * @return  null: passou pela validaçao
      *          ResponseEntity: corresponde a algum erro
      */
-    private ResponseEntity validarRequestParticipante(Participante participante) {
-        ResponseEntity entity = null;
-        if (participante == null) entity = ResponseEntity.badRequest().build();
-        if ("".equals(participante.getNome())) entity = ResponseEntity.badRequest().build();
-        if ("".equals(participante.getEmail())) entity = ResponseEntity.badRequest().build();
-        if (participante.getTurma() == null) entity = ResponseEntity.badRequest().build();
-        return entity;
+    private boolean validarRequestParticipante(Participante participante) throws DesafioException {
+        if (participante == null) throw new DesafioException("Requisição sem a informação de participante");
+
+        if ("".equals(participante.getNome()))
+            throw new DesafioException("Você deve especifcar um nome para esse participante");
+        else if(participante.getNome().length() > 120) throw new DesafioException("Você execedeu o limite de 120 caracteres para o nome");
+
+        if ("".equals(participante.getEmail()))
+            throw new DesafioException("Você deve especifcar um e-mail para esse participante");
+        else if(participante.getEmail().length() > 120) throw new DesafioException("Você execedeu o limite de 120 caracteres para o e-mail");
+        else if(!Validator.isEMail(participante.getEmail())) throw new DesafioException("Parece não ser um e-mail");
+
+
+        if (participante.getTurma() == null) throw new DesafioException("Você deve especifcar uma turma para esse participante");
+        else if (participante.getTurma().getId() < 1) throw new DesafioException("Você deve especifcar a idenficação desta turma");
+
+        return true;
     }
 }
