@@ -1,16 +1,13 @@
 package org.generation.desafio.controller;
 
-import org.generation.desafio.entity.Participante;
 import org.generation.desafio.entity.Turma;
-import org.generation.desafio.repository.ParticipanteRepository;
 import org.generation.desafio.repository.TurmaRepository;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -19,13 +16,8 @@ import java.util.Optional;
 @RequestMapping(path = "api/v1/turma")
 public class TurmaController {
 
-    private final TurmaRepository turmaRepository;
-    //private final ParticipanteRepository participanteRepository;
-
-    public TurmaController(TurmaRepository turmaRepository/*, ParticipanteRepository participanteRepository*/) {
-        this.turmaRepository = turmaRepository;
-        //this.participanteRepository = participanteRepository;
-    }
+    @Resource
+    private TurmaRepository turmaRepository;
 
     /**
      * Retorna a listagem das turmas cadastradas no banco de dados
@@ -78,10 +70,12 @@ public class TurmaController {
         if (name != null && !"".equals(name)) {
             try {
 
-                Turma turma = new Turma();
-                turma.setDescricao(name);
+                //Turma turma = new Turma();
+                //turma.setDescricao(name);
+                //List<Turma> turmas = turmaRepository.findAll(Example.of(turma, ExampleMatcher.matchingAll().withIgnoreCase()));
 
-                List<Turma> turmas = turmaRepository.findAll(Example.of(turma, ExampleMatcher.matchingAll().withIgnoreCase()));
+                List<Turma> turmas = turmaRepository.getByNameTurma(name);
+
                 entity = turmas.size() > 0
                         ? ResponseEntity.ok(turmas)
                         : ResponseEntity.noContent().build();

@@ -1,9 +1,7 @@
 package org.generation.desafio.controller;
 
 import org.generation.desafio.entity.Participante;
-import org.generation.desafio.entity.Participante;
 import org.generation.desafio.entity.Turma;
-import org.generation.desafio.repository.ParticipanteRepository;
 import org.generation.desafio.repository.ParticipanteRepository;
 import org.generation.desafio.repository.TurmaRepository;
 import org.springframework.data.domain.Example;
@@ -12,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -20,13 +19,11 @@ import java.util.Optional;
 @RequestMapping({"api/v1/participante"})
 public class ParticipanteController {
 
-    private final TurmaRepository turmaRepository;
-    private final ParticipanteRepository participanteRepository;
+    @Resource
+    private TurmaRepository turmaRepository;
 
-    public ParticipanteController(ParticipanteRepository participanteRepository, TurmaRepository turmaRepository) {
-        this.participanteRepository = participanteRepository;
-        this.turmaRepository = turmaRepository;
-    }
+    @Resource
+    private ParticipanteRepository participanteRepository;
 
     /**
      * Retorna a listagem dos participantes cadastradas no banco de dados
@@ -79,10 +76,11 @@ public class ParticipanteController {
         if (name != null && !"".equals(name)) {
             try {
 
-                Participante Participante = new Participante();
-                Participante.setNome(name);
+                //Participante Participante = new Participante();
+                //Participante.setNome(name);
+                //List<Participante> participantes = participanteRepository.findAll(Example.of(Participante, ExampleMatcher.matchingAll().withIgnoreCase()));
 
-                List<Participante> participantes = participanteRepository.findAll(Example.of(Participante, ExampleMatcher.matchingAll().withIgnoreCase()));
+                List<Participante> participantes = participanteRepository.getByNameParticipante(name);
                 entity = participantes.size() > 0
                         ? ResponseEntity.ok(participantes)
                         : ResponseEntity.noContent().build();
@@ -183,8 +181,10 @@ public class ParticipanteController {
                 if (entity == null) {
                     participante.setId(id);
                     Turma turma = participante.getTurma();
-                    if (turma != null && turma.getId() != null && turma.getId() > 0)
+                    if (turma.getId() > 0) {
                         turmaRepository.findById(turma.getId()).ifPresent(participante::setTurma);
+                        participante.getTurma().setParticipantes(null);
+                    }
 
                     entity = ResponseEntity.ok(participanteRepository.save(participante));
                 }
@@ -226,15 +226,16 @@ public class ParticipanteController {
     /**
      * Método para validar o preenchimento do objeto Participante.
      * Será validado a descricao e tipo
-     * @param Participante
+     * @param participante
      * @return  null: passou pela validaçao
      *          ResponseEntity: corresponde a algum erro
      */
-    private ResponseEntity validarRequestParticipante(Participante Participante) {
+    private ResponseEntity validarRequestParticipante(Participante participante) {
         ResponseEntity entity = null;
-        if (Participante == null) entity = ResponseEntity.badRequest().build();
-        if ("".equals(Participante.getNome())) entity = ResponseEntity.badRequest().build();
-        if ("".equals(Participante.getEmail())) entity = ResponseEntity.badRequest().build();
+        if (participante == null) entity = ResponseEntity.badRequest().build();
+        if ("".equals(participante.getNome())) entity = ResponseEntity.badRequest().build();
+        if ("".equals(participante.getEmail())) entity = ResponseEntity.badRequest().build();
+        if (participante.getTurma() == null) entity = ResponseEntity.badRequest().build();
         return entity;
     }
 }

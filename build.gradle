@@ -24,11 +24,9 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
     // Bibliotecas para realizar testes
-    testImplementation ('org.springframework.boot:spring-boot-starter-test') {
-        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-    }
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 
     // Para realizar geracao de nomes
     testImplementation 'com.github.javafaker:javafaker:1.0.2'
